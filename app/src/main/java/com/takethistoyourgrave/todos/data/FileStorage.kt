@@ -4,6 +4,7 @@ import com.takethistoyourgrave.todos.model.TodoItem
 import com.takethistoyourgrave.todos.model.json
 import com.takethistoyourgrave.todos.model.parse
 import org.json.JSONArray
+import timber.log.Timber
 import java.io.File
 import java.time.LocalDateTime
 
@@ -15,10 +16,16 @@ class FileStorage(private val file: File) {
 
     fun add(item: TodoItem) {
         items.add(item)
+        Timber.d("add: uid=${item.uid}, text=${item.text}")
     }
 
     fun remove(uid: String) {
-        items.removeAll { it.uid == uid }
+        val removed = items.removeAll { it.uid == uid }
+        if (removed) {
+            Timber.d("remove: uid=$uid")
+        } else {
+            Timber.w("remove: uid=$uid не найден")
+        }
     }
 
     fun save() {
@@ -27,12 +34,19 @@ class FileStorage(private val file: File) {
             jsonArray.put(item.json)
         }
         file.writeText(jsonArray.toString())
+        Timber.d("save: ${items.size} items в ${file.name}")
     }
 
     fun load() {
-        if (!file.exists()) return
+        if (!file.exists()) {
+            Timber.d("load: файл ${file.name} не найден")
+            return
+        }
         val text = file.readText()
-        if (text.isBlank()) return
+        if (text.isBlank()) {
+            Timber.d("load: файл ${file.name} пуст")
+            return
+        }
 
         val jsonArray = JSONArray(text)
         items.clear()
@@ -43,13 +57,19 @@ class FileStorage(private val file: File) {
                 items.add(item)
             }
         }
+        Timber.d("load: загружено ${items.size} items из ${file.name}")
         removeExpired()
     }
 
     private fun removeExpired() {
         val now = LocalDateTime.now()
+        val before = items.size
         items.removeAll {
             it.deadline != null && it.deadline.isBefore(now) && !it.isDone
+        }
+        val removed = before - items.size
+        if (removed > 0) {
+            Timber.d("removeExpired: удалено $removed просроченных дел")
         }
     }
 }
