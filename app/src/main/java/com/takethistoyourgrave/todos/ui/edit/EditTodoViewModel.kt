@@ -1,0 +1,81 @@
+package com.takethistoyourgrave.todos.ui.edit
+
+import androidx.lifecycle.ViewModel
+import com.takethistoyourgrave.todos.data.FileStorage
+import com.takethistoyourgrave.todos.model.TodoItem
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+class EditTodoViewModel(private val storage: FileStorage) : ViewModel() {
+
+    private val _state = MutableStateFlow(EditTodoState())
+    val state: StateFlow<EditTodoState> = _state
+
+    fun onEvent(event: EditTodoEvent) {
+        when (event) {
+            is EditTodoEvent.LoadItem -> {
+                _state.value = EditTodoState(
+                    uid = event.item.uid,
+                    text = event.item.text,
+                    importance = event.item.importance,
+                    isDone = event.item.isDone,
+                    color = event.item.color,
+                    deadline = event.item.deadline
+                )
+            }
+
+            is EditTodoEvent.UpdateText -> {
+                _state.value = _state.value.copy(text = event.text)
+            }
+
+            is EditTodoEvent.UpdateImportance -> {
+                _state.value = _state.value.copy(importance = event.importance)
+            }
+
+            is EditTodoEvent.UpdateIsDone -> {
+                _state.value = _state.value.copy(isDone = event.isDone)
+            }
+
+            is EditTodoEvent.UpdateColor -> {
+                _state.value = _state.value.copy(color = event.color)
+            }
+
+            is EditTodoEvent.UpdateCustomColor -> {
+                _state.value = _state.value.copy(
+                    customColor = event.color,
+                    color = event.color
+                )
+            }
+
+            is EditTodoEvent.UpdateDeadline -> {
+                _state.value = _state.value.copy(deadline = event.deadline)
+            }
+
+            is EditTodoEvent.ShowDatePicker -> {
+                _state.value = _state.value.copy(showDatePicker = true)
+            }
+
+            is EditTodoEvent.HideDatePicker -> {
+                _state.value = _state.value.copy(showDatePicker = false)
+            }
+
+            is EditTodoEvent.Save -> {
+                val s = _state.value
+                if (s.text.isBlank()) return
+
+                storage.remove(s.uid)
+                val item = TodoItem(
+                    uid = s.uid,
+                    text = s.text,
+                    importance = s.importance,
+                    isDone = s.isDone,
+                    color = s.color,
+                    deadline = s.deadline
+                )
+                storage.add(item)
+                storage.save()
+                _state.value = s.copy(isSaved = true)
+            }
+        }
+    }
+}
