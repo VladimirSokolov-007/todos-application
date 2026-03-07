@@ -37,6 +37,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val leakyList = mutableListOf<ByteArray>()
+        for (i in 0..300) {
+            leakyList.add(ByteArray(1024 * 1024))
+        }
+
         val file = File(filesDir, "todos.json")
         storage = FileStorage(file)
         storage.load()
