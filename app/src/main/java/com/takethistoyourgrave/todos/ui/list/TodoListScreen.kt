@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.takethistoyourgrave.todos.model.TodoItem
+import com.takethistoyourgrave.todos.ui.components.SwipeToDeleteCard
 import com.takethistoyourgrave.todos.ui.components.TodoItemCard
 import com.takethistoyourgrave.todos.ui.theme.IOSBackground
 import com.takethistoyourgrave.todos.ui.theme.IOSBlue
@@ -65,8 +66,12 @@ fun TodoListScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(items = state.items) { item ->
-                TodoItemCard(item = item, onClick = { onItemClick(item) })
+            items(items = state.items, key = { it.uid }) { item ->
+                SwipeToDeleteCard(
+                    onDelete = { viewModel.onEvent(TodoListEvent.Delete(item.uid)) }
+                ) {
+                    TodoItemCard(item = item, onClick = { onItemClick(item) })
+                }
             }
         }
     }

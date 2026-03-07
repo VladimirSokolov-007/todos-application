@@ -1,5 +1,10 @@
 package com.takethistoyourgrave.todos.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,8 +22,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,6 +60,9 @@ fun ColorPickerScreen(
         android.graphics.Color.HSVToColor(floatArrayOf(hue, saturation, brightness))
     )
 
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) { visible = true }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,60 +88,73 @@ fun ColorPickerScreen(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = IOSBackground)
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+        AnimatedVisibility(
+            visible = visible,
+            enter = slideInVertically(
+                initialOffsetY = { it / 3 },
+                animationSpec = tween(400)
+            ) + fadeIn(animationSpec = tween(400))
         ) {
-            // Текущий цвет
-            Box(
-                modifier = Modifier
-                    .size(70.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(currentColor)
-                    .align(Alignment.CenterHorizontally)
-            )
-
-            // Яркость
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White)
-                    .padding(16.dp)
-            ) {
-                Text("Яркость", fontSize = 13.sp, color = IOSGray)
-                Slider(
-                    value = brightness,
-                    onValueChange = { brightness = it },
-                    valueRange = 0f..1f,
-                    colors = SliderDefaults.colors(
-                        thumbColor = IOSBlue,
-                        activeTrackColor = IOSBlue
-                    )
-                )
-            }
-
-            // Градиент
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White)
+                    .fillMaxSize()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                Text("Выберите цвет", fontSize = 13.sp, color = IOSGray)
-                ColorGradient(
-                    brightness = brightness,
-                    selectedHue = hue,
-                    selectedSaturation = saturation,
-                    onColorPicked = { h, s ->
-                        hue = h
-                        saturation = s
-                    }
-                )
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = scaleIn(
+                        initialScale = 0.3f,
+                        animationSpec = tween(500)
+                    ) + fadeIn(animationSpec = tween(500))
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(70.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(currentColor)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .padding(16.dp)
+                ) {
+                    Text("Яркость", fontSize = 13.sp, color = IOSGray)
+                    Slider(
+                        value = brightness,
+                        onValueChange = { brightness = it },
+                        valueRange = 0f..1f,
+                        colors = SliderDefaults.colors(
+                            thumbColor = IOSBlue,
+                            activeTrackColor = IOSBlue
+                        )
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color.White)
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text("Выберите цвет", fontSize = 13.sp, color = IOSGray)
+                    ColorGradient(
+                        brightness = brightness,
+                        selectedHue = hue,
+                        selectedSaturation = saturation,
+                        onColorPicked = { h, s ->
+                            hue = h
+                            saturation = s
+                        }
+                    )
+                }
             }
         }
     }
