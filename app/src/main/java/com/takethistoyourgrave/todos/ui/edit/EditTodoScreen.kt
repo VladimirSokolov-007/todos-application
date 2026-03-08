@@ -10,6 +10,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun EditTodoScreen(
     uid: String,
+    selectedColor: Int?,
+    onColorConsumed: () -> Unit,
     onBack: () -> Unit,
     onOpenColorPicker: (Int) -> Unit,
     viewModel: EditTodoViewModel = koinViewModel()
@@ -18,6 +20,13 @@ fun EditTodoScreen(
 
     LaunchedEffect(uid) {
         viewModel.onEvent(EditTodoEvent.LoadItem(uid))
+    }
+
+    LaunchedEffect(selectedColor) {
+        if (selectedColor != null) {
+            viewModel.onEvent(EditTodoEvent.UpdateCustomColor(selectedColor))
+            onColorConsumed()
+        }
     }
 
     LaunchedEffect(state.isSaved) {

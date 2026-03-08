@@ -9,11 +9,20 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateTodoScreen(
+    selectedColor: Int?,
+    onColorConsumed: () -> Unit,
     onBack: () -> Unit,
     onOpenColorPicker: (Int) -> Unit,
     viewModel: CreateTodoViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(selectedColor) {
+        if (selectedColor != null) {
+            viewModel.onEvent(CreateTodoEvent.UpdateCustomColor(selectedColor))
+            onColorConsumed()
+        }
+    }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) onBack()
