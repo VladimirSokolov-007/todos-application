@@ -2,7 +2,6 @@ package com.takethistoyourgrave.todos.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,11 +31,10 @@ import com.takethistoyourgrave.todos.ui.theme.IOSRed
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
+fun TodoItemCard(item: TodoItem) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
+            .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

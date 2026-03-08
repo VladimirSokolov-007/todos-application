@@ -1,6 +1,8 @@
 package com.takethistoyourgrave.todos.ui.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -68,10 +70,12 @@ fun TodoListScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(items = state.items, key = { it.uid }) { item ->
-                SwipeToDeleteCard(
-                    onDelete = { viewModel.onEvent(TodoListEvent.Delete(item.uid)) }
-                ) {
-                    TodoItemCard(item = item, onClick = { onItemClick(item) })
+                Box(modifier = Modifier.clickable { onItemClick(item) }) {
+                    SwipeToDeleteCard(
+                        onDelete = { viewModel.onEvent(TodoListEvent.Delete(item.uid)) }
+                    ) {
+                        TodoItemCard(item = item)
+                    }
                 }
             }
         }
