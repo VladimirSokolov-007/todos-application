@@ -23,18 +23,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.takethistoyourgrave.todos.model.TodoItem
+import com.takethistoyourgrave.todos.domain.model.TodoItem
 import com.takethistoyourgrave.todos.ui.components.SwipeToDeleteCard
 import com.takethistoyourgrave.todos.ui.components.TodoItemCard
 import com.takethistoyourgrave.todos.ui.theme.IOSBackground
 import com.takethistoyourgrave.todos.ui.theme.IOSBlue
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoListScreen(
-    viewModel: TodoListViewModel,
     onItemClick: (TodoItem) -> Unit,
-    onAddClick: () -> Unit
+    onAddClick: () -> Unit,
+    viewModel: TodoListViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
