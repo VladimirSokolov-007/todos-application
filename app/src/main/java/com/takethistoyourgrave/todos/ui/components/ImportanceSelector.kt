@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.takethistoyourgrave.todos.model.Importance
+import com.takethistoyourgrave.todos.domain.model.Importance
 import com.takethistoyourgrave.todos.ui.theme.IOSGray5
 
 private val importanceColors = mapOf(

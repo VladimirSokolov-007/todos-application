@@ -1,8 +1,8 @@
-package com.takethistoyourgrave.todos.data
+package com.takethistoyourgrave.todos.data.local
 
-import com.takethistoyourgrave.todos.model.TodoItem
-import com.takethistoyourgrave.todos.model.json
-import com.takethistoyourgrave.todos.model.parse
+import com.takethistoyourgrave.todos.domain.model.TodoItem
+import com.takethistoyourgrave.todos.domain.model.json
+import com.takethistoyourgrave.todos.domain.model.parse
 import org.json.JSONArray
 import timber.log.Timber
 import java.io.File
@@ -16,15 +16,15 @@ class FileStorage(private val file: File) {
 
     fun add(item: TodoItem) {
         items.add(item)
-        Timber.d("add: uid=${item.uid}, text=${item.text}")
+        Timber.Forest.d("add: uid=${item.uid}, text=${item.text}")
     }
 
     fun remove(uid: String) {
         val removed = items.removeAll { it.uid == uid }
         if (removed) {
-            Timber.d("remove: uid=$uid")
+            Timber.Forest.d("remove: uid=$uid")
         } else {
-            Timber.w("remove: uid=$uid не найден")
+            Timber.Forest.w("remove: uid=$uid не найден")
         }
     }
 
@@ -34,17 +34,17 @@ class FileStorage(private val file: File) {
             jsonArray.put(item.json)
         }
         file.writeText(jsonArray.toString())
-        Timber.d("save: ${items.size} items в ${file.name}")
+        Timber.Forest.d("save: ${items.size} items в ${file.name}")
     }
 
     fun load() {
         if (!file.exists()) {
-            Timber.d("load: файл ${file.name} не найден")
+            Timber.Forest.d("load: файл ${file.name} не найден")
             return
         }
         val text = file.readText()
         if (text.isBlank()) {
-            Timber.d("load: файл ${file.name} пуст")
+            Timber.Forest.d("load: файл ${file.name} пуст")
             return
         }
 
@@ -52,12 +52,12 @@ class FileStorage(private val file: File) {
         items.clear()
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
-            val item = TodoItem.parse(jsonObject)
+            val item = TodoItem.Companion.parse(jsonObject)
             if (item != null) {
                 items.add(item)
             }
         }
-        Timber.d("load: загружено ${items.size} items из ${file.name}")
+        Timber.Forest.d("load: загружено ${items.size} items из ${file.name}")
         removeExpired()
     }
 
@@ -69,7 +69,7 @@ class FileStorage(private val file: File) {
         }
         val removed = before - items.size
         if (removed > 0) {
-            Timber.d("removeExpired: удалено $removed просроченных дел")
+            Timber.Forest.d("removeExpired: удалено $removed просроченных дел")
         }
     }
 }

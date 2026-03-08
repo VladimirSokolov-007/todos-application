@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.takethistoyourgrave.todos.domain.Importance
-import com.takethistoyourgrave.todos.domain.TodoItem
+import com.takethistoyourgrave.todos.domain.model.Importance
+import com.takethistoyourgrave.todos.domain.model.TodoItem
 import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.navigation.ToDosNavigation
 import com.takethistoyourgrave.todos.ui.theme.ToDosTheme
