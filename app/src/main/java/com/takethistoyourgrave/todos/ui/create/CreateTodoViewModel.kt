@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.domain.model.TodoItem
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class CreateTodoViewModel(
@@ -14,6 +16,9 @@ class CreateTodoViewModel(
 
     private val _state = MutableStateFlow(CreateTodoState())
     val state: StateFlow<CreateTodoState> = _state
+
+    private val _eventChannel = Channel<CreateTodoAction>(Channel.BUFFERED)
+    val eventChannel = _eventChannel.receiveAsFlow()
 
     fun onEvent(event: CreateTodoEvent) {
         when (event) {
@@ -65,7 +70,7 @@ class CreateTodoViewModel(
                 )
                 viewModelScope.launch {
                     repository.addItem(item)
-                    _state.value = s.copy(isSaved = true)
+                    _eventChannel.send(CreateTodoAction.NavigateBack)
                 }
             }
         }

@@ -29,8 +29,12 @@ fun EditTodoScreen(
         }
     }
 
-    LaunchedEffect(state.isSaved) {
-        if (state.isSaved) onBack()
+    LaunchedEffect(Unit) {
+        viewModel.eventChannel.collect { effect ->
+            when (effect) {
+                is EditTodoAction.NavigateBack -> onBack()
+            }
+        }
     }
 
     TodoFormContent(

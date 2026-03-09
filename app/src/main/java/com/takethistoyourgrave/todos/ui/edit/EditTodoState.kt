@@ -12,6 +12,5 @@ data class EditTodoState(
     val color: Int = Color.WHITE,
     val customColor: Int? = null,
     val deadline: LocalDateTime? = null,
-    val showDatePicker: Boolean = false,
-    val isSaved: Boolean = false
+    val showDatePicker: Boolean = false
 )
