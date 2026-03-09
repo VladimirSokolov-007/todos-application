@@ -1,7 +1,7 @@
 package com.takethistoyourgrave.todos.di
 
 import android.os.Build
-import com.takethistoyourgrave.todos.data.local.FileStorage
+import com.takethistoyourgrave.todos.data.local.TodoDatabase
 import com.takethistoyourgrave.todos.data.remote.NetworkDataSource
 import com.takethistoyourgrave.todos.data.remote.NetworkDataSourceImpl
 import com.takethistoyourgrave.todos.data.remote.TodoApi
@@ -10,6 +10,9 @@ import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.ui.create.CreateTodoViewModel
 import com.takethistoyourgrave.todos.ui.edit.EditTodoViewModel
 import com.takethistoyourgrave.todos.ui.list.TodoListViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -17,7 +20,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 
 private const val BASE_URL = "https://hive.mrdekk.ru/todo/"
 private const val AUTH_TOKEN = "вставлю сюда токен как только пришлют((("
@@ -31,8 +33,8 @@ val appModule = module {
         OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .addHeader("Authorization", AUTH_TOKEN)
-                    .addHeader("X-Generate-Fails", "30")
+                    .addHeader("Authorization", "Bearer $AUTH_TOKEN")
+                    .addHeader("X-Generate-Fails", "0")
                     .build()
                 chain.proceed(request)
             }
@@ -49,9 +51,8 @@ val appModule = module {
             .create(TodoApi::class.java)
     }
 
-    single {
-        FileStorage(File(androidContext().filesDir, "todos.json")).also { it.load() }
-    }
+    single { TodoDatabase.create(androidContext()) }
+    single { get<TodoDatabase>().todoDao() }
 
     single<NetworkDataSource> {
         NetworkDataSourceImpl(
@@ -60,7 +61,9 @@ val appModule = module {
         )
     }
 
-    single<TodoRepository> { TodoRepositoryImpl(storage = get(), network = get()) }
+    single { CoroutineScope(SupervisorJob() + Dispatchers.IO) }
+
+    single<TodoRepository> { TodoRepositoryImpl(dao = get(), network = get(), scope = get()) }
 
     viewModel { TodoListViewModel(get()) }
     viewModel { CreateTodoViewModel(get()) }
