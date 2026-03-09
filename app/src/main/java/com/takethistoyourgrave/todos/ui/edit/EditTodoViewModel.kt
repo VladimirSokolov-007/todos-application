@@ -1,12 +1,14 @@
 package com.takethistoyourgrave.todos.ui.edit
 
 import androidx.lifecycle.ViewModel
-import com.takethistoyourgrave.todos.data.FileStorage
-import com.takethistoyourgrave.todos.model.TodoItem
+import com.takethistoyourgrave.todos.domain.TodoRepository
+import com.takethistoyourgrave.todos.domain.model.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class EditTodoViewModel(private val storage: FileStorage) : ViewModel() {
+class EditTodoViewModel(
+    private val repository: TodoRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(EditTodoState())
     val state: StateFlow<EditTodoState> = _state
@@ -14,13 +16,14 @@ class EditTodoViewModel(private val storage: FileStorage) : ViewModel() {
     fun onEvent(event: EditTodoEvent) {
         when (event) {
             is EditTodoEvent.LoadItem -> {
+                val item = repository.getItem(event.uid) ?: return
                 _state.value = EditTodoState(
-                    uid = event.item.uid,
-                    text = event.item.text,
-                    importance = event.item.importance,
-                    isDone = event.item.isDone,
-                    color = event.item.color,
-                    deadline = event.item.deadline
+                    uid = item.uid,
+                    text = item.text,
+                    importance = item.importance,
+                    isDone = item.isDone,
+                    color = item.color,
+                    deadline = item.deadline
                 )
             }
 
@@ -63,7 +66,6 @@ class EditTodoViewModel(private val storage: FileStorage) : ViewModel() {
                 val s = _state.value
                 if (s.text.isBlank()) return
 
-                storage.remove(s.uid)
                 val item = TodoItem(
                     uid = s.uid,
                     text = s.text,
@@ -72,8 +74,7 @@ class EditTodoViewModel(private val storage: FileStorage) : ViewModel() {
                     color = s.color,
                     deadline = s.deadline
                 )
-                storage.add(item)
-                storage.save()
+                repository.updateItem(item)
                 _state.value = s.copy(isSaved = true)
             }
         }

@@ -1,7 +1,7 @@
 package com.takethistoyourgrave.todos.ui.edit
 
 import android.graphics.Color
-import com.takethistoyourgrave.todos.model.Importance
+import com.takethistoyourgrave.todos.domain.model.Importance
 import java.time.LocalDateTime
 
 data class EditTodoState(

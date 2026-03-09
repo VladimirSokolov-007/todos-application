@@ -12,4 +12,4 @@ data object CreateTodoKey
 data class EditTodoKey(val uid: String)
 
 @Serializable
-data class ColorPickerKey(val initialColor: Int, val fromEdit: Boolean)
+data class ColorPickerKey(val initialColor: Int)

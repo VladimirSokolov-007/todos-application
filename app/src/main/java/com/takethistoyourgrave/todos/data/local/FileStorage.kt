@@ -1,8 +1,8 @@
-package com.takethistoyourgrave.todos.data
+package com.takethistoyourgrave.todos.data.local
 
-import com.takethistoyourgrave.todos.model.TodoItem
-import com.takethistoyourgrave.todos.model.json
-import com.takethistoyourgrave.todos.model.parse
+import com.takethistoyourgrave.todos.domain.model.TodoItem
+import com.takethistoyourgrave.todos.domain.model.json
+import com.takethistoyourgrave.todos.domain.model.parse
 import org.json.JSONArray
 import timber.log.Timber
 import java.io.File

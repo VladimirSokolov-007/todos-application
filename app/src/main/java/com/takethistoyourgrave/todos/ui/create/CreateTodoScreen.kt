@@ -5,14 +5,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.takethistoyourgrave.todos.ui.components.TodoFormContent
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateTodoScreen(
-    viewModel: CreateTodoViewModel,
+    selectedColor: Int?,
+    onColorConsumed: () -> Unit,
     onBack: () -> Unit,
-    onOpenColorPicker: () -> Unit
+    onOpenColorPicker: (Int) -> Unit,
+    viewModel: CreateTodoViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(selectedColor) {
+        if (selectedColor != null) {
+            viewModel.onEvent(CreateTodoEvent.UpdateCustomColor(selectedColor))
+            onColorConsumed()
+        }
+    }
 
     LaunchedEffect(state.isSaved) {
         if (state.isSaved) onBack()
@@ -36,6 +46,8 @@ fun CreateTodoScreen(
         onHideDatePicker = { viewModel.onEvent(CreateTodoEvent.HideDatePicker) },
         onSave = { viewModel.onEvent(CreateTodoEvent.Save) },
         onBack = onBack,
-        onOpenColorPicker = onOpenColorPicker
+        onOpenColorPicker = {
+            onOpenColorPicker(state.customColor ?: state.color)
+        }
     )
 }

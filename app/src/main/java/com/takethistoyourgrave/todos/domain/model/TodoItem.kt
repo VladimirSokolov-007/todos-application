@@ -1,4 +1,4 @@
-package com.takethistoyourgrave.todos.model
+package com.takethistoyourgrave.todos.domain.model
 
 import android.graphics.Color
 import java.time.LocalDateTime

@@ -1,6 +1,6 @@
 package com.takethistoyourgrave.todos.ui.create
 
-import com.takethistoyourgrave.todos.model.Importance
+import com.takethistoyourgrave.todos.domain.model.Importance
 import java.time.LocalDateTime
 
 sealed class CreateTodoEvent {

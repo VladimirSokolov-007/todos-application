@@ -1,12 +1,14 @@
 package com.takethistoyourgrave.todos.ui.create
 
 import androidx.lifecycle.ViewModel
-import com.takethistoyourgrave.todos.data.FileStorage
-import com.takethistoyourgrave.todos.model.TodoItem
+import com.takethistoyourgrave.todos.domain.TodoRepository
+import com.takethistoyourgrave.todos.domain.model.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class CreateTodoViewModel(private val storage: FileStorage) : ViewModel() {
+class CreateTodoViewModel(
+    private val repository: TodoRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CreateTodoState())
     val state: StateFlow<CreateTodoState> = _state
@@ -59,8 +61,7 @@ class CreateTodoViewModel(private val storage: FileStorage) : ViewModel() {
                     color = s.color,
                     deadline = s.deadline
                 )
-                storage.add(item)
-                storage.save()
+                repository.addItem(item)
                 _state.value = s.copy(isSaved = true)
             }
         }

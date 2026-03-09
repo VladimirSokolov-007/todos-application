@@ -2,7 +2,6 @@ package com.takethistoyourgrave.todos.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,20 +23,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.takethistoyourgrave.todos.model.Importance
-import com.takethistoyourgrave.todos.model.TodoItem
-import com.takethistoyourgrave.todos.ui.theme.IOSBlue
+import com.takethistoyourgrave.todos.domain.model.Importance
+import com.takethistoyourgrave.todos.domain.model.TodoItem
 import com.takethistoyourgrave.todos.ui.theme.IOSGray
 import com.takethistoyourgrave.todos.ui.theme.IOSGreen
 import com.takethistoyourgrave.todos.ui.theme.IOSRed
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun TodoItemCard(item: TodoItem, onClick: () -> Unit) {
+fun TodoItemCard(item: TodoItem) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
+            .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)

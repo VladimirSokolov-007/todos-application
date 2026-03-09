@@ -1,29 +1,28 @@
 package com.takethistoyourgrave.todos.ui.list
 
 import androidx.lifecycle.ViewModel
-import com.takethistoyourgrave.todos.data.FileStorage
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import androidx.lifecycle.viewModelScope
+import com.takethistoyourgrave.todos.domain.TodoRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
-class TodoListViewModel(private val storage: FileStorage) : ViewModel() {
+class TodoListViewModel(
+    private val repository: TodoRepository
+) : ViewModel() {
 
-    private val _state = MutableStateFlow(TodoListState())
-    val state: StateFlow<TodoListState> = _state
-
-    init {
-        onEvent(TodoListEvent.Load)
-    }
+    val state = repository.itemsFlow
+        .map { items -> TodoListState(items = items) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, TodoListState())
 
     fun onEvent(event: TodoListEvent) {
         when (event) {
             is TodoListEvent.Load -> {
-                _state.value = TodoListState(items = storage.getItems())
+                repository.refresh()
             }
 
             is TodoListEvent.Delete -> {
-                storage.remove(event.uid)
-                storage.save()
-                _state.value = TodoListState(items = storage.getItems())
+                repository.deleteItem(event.uid)
             }
         }
     }

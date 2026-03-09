@@ -43,11 +43,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.takethistoyourgrave.todos.model.Importance
+import com.takethistoyourgrave.todos.domain.model.Importance
 import com.takethistoyourgrave.todos.ui.theme.IOSBackground
 import com.takethistoyourgrave.todos.ui.theme.IOSBlue
 import com.takethistoyourgrave.todos.ui.theme.IOSGray
-import com.takethistoyourgrave.todos.ui.theme.IOSGray5
 import com.takethistoyourgrave.todos.ui.theme.IOSGreen
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
