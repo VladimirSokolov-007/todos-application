@@ -32,6 +32,7 @@ val appModule = module {
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader("Authorization", AUTH_TOKEN)
+                    .addHeader("X-Generate-Fails", "30")
                     .build()
                 chain.proceed(request)
             }

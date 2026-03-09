@@ -51,16 +51,10 @@ class TodoRepositoryImpl(
 
     override suspend fun refresh() {
         val networkItems = network.loadItems()
-        if (networkItems.isNotEmpty()) {
-            Timber.d("[Repo] refresh: получено ${networkItems.size} дел с бэкенда")
-            networkItems.forEach { item ->
-                storage.remove(item.uid)
-                storage.add(item)
-            }
-            storage.save()
-        } else {
-            Timber.d("[Repo] refresh: бэкенд пуст или недоступен, используем кэш")
-        }
+        storage.clear()
+        networkItems.forEach { storage.add(it) }
+        storage.save()
         _itemsFlow.value = storage.getItems()
+        Timber.d("[Repo] refresh: синхронизировано ${networkItems.size} дел с сервера")
     }
 }

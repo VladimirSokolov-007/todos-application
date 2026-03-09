@@ -16,6 +16,10 @@ class TodoListViewModel(
         .map { items -> TodoListState(items = items) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, TodoListState())
 
+    init {
+        viewModelScope.launch { repository.refresh() }
+    }
+
     fun onEvent(event: TodoListEvent) {
         when (event) {
             is TodoListEvent.Load -> {
