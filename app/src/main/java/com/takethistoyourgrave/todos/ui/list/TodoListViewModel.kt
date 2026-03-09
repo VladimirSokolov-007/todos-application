@@ -6,6 +6,7 @@ import com.takethistoyourgrave.todos.domain.TodoRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class TodoListViewModel(
     private val repository: TodoRepository
@@ -18,11 +19,11 @@ class TodoListViewModel(
     fun onEvent(event: TodoListEvent) {
         when (event) {
             is TodoListEvent.Load -> {
-                repository.refresh()
+                viewModelScope.launch { repository.refresh() }
             }
 
             is TodoListEvent.Delete -> {
-                repository.deleteItem(event.uid)
+                viewModelScope.launch { repository.deleteItem(event.uid) }
             }
         }
     }

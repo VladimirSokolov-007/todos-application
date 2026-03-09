@@ -24,24 +24,24 @@ class TodoRepositoryImpl(
         return storage.getItems().find { it.uid == uid }
     }
 
-    override fun addItem(item: TodoItem) {
+    override suspend fun addItem(item: TodoItem) {
         storage.add(item)
         storage.save()
-        network.sendItem(item)
+        network.addItem(item)
         _itemsFlow.value = storage.getItems()
         Timber.d("[Repo] addItem: uid=${item.uid}")
     }
 
-    override fun updateItem(item: TodoItem) {
+    override suspend fun updateItem(item: TodoItem) {
         storage.remove(item.uid)
         storage.add(item)
         storage.save()
-        network.sendItem(item)
+        network.updateItem(item)
         _itemsFlow.value = storage.getItems()
         Timber.d("[Repo] updateItem: uid=${item.uid}")
     }
 
-    override fun deleteItem(uid: String) {
+    override suspend fun deleteItem(uid: String) {
         storage.remove(uid)
         storage.save()
         network.deleteItem(uid)
@@ -49,12 +49,17 @@ class TodoRepositoryImpl(
         Timber.d("[Repo] deleteItem: uid=$uid")
     }
 
-    override fun refresh() {
+    override suspend fun refresh() {
         val networkItems = network.loadItems()
         if (networkItems.isNotEmpty()) {
             Timber.d("[Repo] refresh: получено ${networkItems.size} дел с бэкенда")
+            networkItems.forEach { item ->
+                storage.remove(item.uid)
+                storage.add(item)
+            }
+            storage.save()
         } else {
-            Timber.d("[Repo] refresh: бэкенд пуст, используем кэш")
+            Timber.d("[Repo] refresh: бэкенд пуст или недоступен, используем кэш")
         }
         _itemsFlow.value = storage.getItems()
     }
