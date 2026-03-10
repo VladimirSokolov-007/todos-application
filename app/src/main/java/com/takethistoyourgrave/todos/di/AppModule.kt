@@ -22,7 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 private const val BASE_URL = "https://hive.mrdekk.ru/todo/"
-private const val AUTH_TOKEN = "вставлю сюда токен как только пришлют((("
+private const val AUTH_TOKEN = "b75fe625-8bda-4f81-9837-09f573777ac1"
 
 val appModule = module {
 
