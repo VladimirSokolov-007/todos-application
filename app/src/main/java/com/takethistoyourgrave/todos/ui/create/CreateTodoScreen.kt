@@ -9,11 +9,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CreateTodoScreen(
+    key: String,
     selectedColor: Int?,
     onColorConsumed: () -> Unit,
     onBack: () -> Unit,
     onOpenColorPicker: (Int) -> Unit,
-    viewModel: CreateTodoViewModel = koinViewModel()
+    viewModel: CreateTodoViewModel = koinViewModel(key = key)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -24,8 +25,12 @@ fun CreateTodoScreen(
         }
     }
 
-    LaunchedEffect(state.isSaved) {
-        if (state.isSaved) onBack()
+    LaunchedEffect(Unit) {
+        viewModel.eventChannel.collect { effect ->
+            when (effect) {
+                is CreateTodoAction.NavigateBack -> onBack()
+            }
+        }
     }
 
     TodoFormContent(

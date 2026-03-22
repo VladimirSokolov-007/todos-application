@@ -15,3 +15,7 @@ sealed class EditTodoEvent {
     object HideDatePicker : EditTodoEvent()
     object Save : EditTodoEvent()
 }
+
+sealed class EditTodoAction {
+    data object NavigateBack : EditTodoAction()
+}

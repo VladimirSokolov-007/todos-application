@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.domain.model.TodoItem
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class EditTodoViewModel(
@@ -15,18 +17,23 @@ class EditTodoViewModel(
     private val _state = MutableStateFlow(EditTodoState())
     val state: StateFlow<EditTodoState> = _state
 
+    private val _eventChannel = Channel<EditTodoAction>(Channel.BUFFERED)
+    val eventChannel = _eventChannel.receiveAsFlow()
+
     fun onEvent(event: EditTodoEvent) {
         when (event) {
             is EditTodoEvent.LoadItem -> {
-                val item = repository.getItem(event.uid) ?: return
-                _state.value = EditTodoState(
-                    uid = item.uid,
-                    text = item.text,
-                    importance = item.importance,
-                    isDone = item.isDone,
-                    color = item.color,
-                    deadline = item.deadline
-                )
+                viewModelScope.launch {
+                    val item = repository.getItem(event.uid) ?: return@launch
+                    _state.value = EditTodoState(
+                        uid = item.uid,
+                        text = item.text,
+                        importance = item.importance,
+                        isDone = item.isDone,
+                        color = item.color,
+                        deadline = item.deadline
+                    )
+                }
             }
 
             is EditTodoEvent.UpdateText -> {
@@ -78,7 +85,7 @@ class EditTodoViewModel(
                 )
                 viewModelScope.launch {
                     repository.updateItem(item)
-                    _state.value = s.copy(isSaved = true)
+                    _eventChannel.send(EditTodoAction.NavigateBack)
                 }
             }
         }

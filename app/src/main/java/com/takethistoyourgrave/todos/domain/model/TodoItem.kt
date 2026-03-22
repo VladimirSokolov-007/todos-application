@@ -1,6 +1,7 @@
 package com.takethistoyourgrave.todos.domain.model
 
 import android.graphics.Color
+import com.takethistoyourgrave.todos.data.local.TodoEntity
 import com.takethistoyourgrave.todos.data.remote.dto.TodoItemDto
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -15,6 +16,20 @@ data class TodoItem(
     val isDone: Boolean = false
 ) {
     companion object
+
+    fun toEntity(): TodoEntity {
+        val now = System.currentTimeMillis() / 1000
+        return TodoEntity(
+            uid = uid,
+            text = text,
+            importance = importance.name,
+            color = color,
+            deadline = deadline?.atZone(ZoneId.systemDefault())?.toEpochSecond(),
+            isDone = isDone,
+            createdAt = now,
+            updatedAt = now
+        )
+    }
 
     fun toDto(deviceId: String): TodoItemDto {
         val now = System.currentTimeMillis() / 1000

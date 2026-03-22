@@ -29,13 +29,14 @@ fun ToDosNavigation() {
                             backStack.add(EditTodoKey(uid = item.uid))
                         },
                         onAddClick = {
-                            backStack.add(CreateTodoKey)
+                            backStack.add(CreateTodoKey())
                         }
                     )
                 }
 
                 is CreateTodoKey -> NavEntry(key) {
                     CreateTodoScreen(
+                        key = key.id,
                         selectedColor = selectedColor,
                         onColorConsumed = { selectedColor = null },
                         onBack = {

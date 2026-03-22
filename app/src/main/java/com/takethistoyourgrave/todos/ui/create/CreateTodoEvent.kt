@@ -14,3 +14,7 @@ sealed class CreateTodoEvent {
     object HideDatePicker : CreateTodoEvent()
     object Save : CreateTodoEvent()
 }
+
+sealed class CreateTodoAction {
+    data object NavigateBack : CreateTodoAction()
+}
