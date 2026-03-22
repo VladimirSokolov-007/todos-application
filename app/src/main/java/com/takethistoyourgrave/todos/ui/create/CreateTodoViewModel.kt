@@ -1,10 +1,12 @@
 package com.takethistoyourgrave.todos.ui.create
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.domain.model.TodoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class CreateTodoViewModel(
     private val repository: TodoRepository
@@ -61,8 +63,10 @@ class CreateTodoViewModel(
                     color = s.color,
                     deadline = s.deadline
                 )
-                repository.addItem(item)
-                _state.value = s.copy(isSaved = true)
+                viewModelScope.launch {
+                    repository.addItem(item)
+                    _state.value = s.copy(isSaved = true)
+                }
             }
         }
     }

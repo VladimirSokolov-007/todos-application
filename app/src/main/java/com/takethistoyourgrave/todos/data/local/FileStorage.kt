@@ -19,6 +19,11 @@ class FileStorage(private val file: File) {
         Timber.d("add: uid=${item.uid}, text=${item.text}")
     }
 
+    fun clear() {
+        items.clear()
+        Timber.d("clear: все items удалены")
+    }
+
     fun remove(uid: String) {
         val removed = items.removeAll { it.uid == uid }
         if (removed) {

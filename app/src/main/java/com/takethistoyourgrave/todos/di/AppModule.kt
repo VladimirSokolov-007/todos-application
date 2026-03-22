@@ -1,25 +1,64 @@
 package com.takethistoyourgrave.todos.di
 
+import android.os.Build
 import com.takethistoyourgrave.todos.data.local.FileStorage
 import com.takethistoyourgrave.todos.data.remote.NetworkDataSource
 import com.takethistoyourgrave.todos.data.remote.NetworkDataSourceImpl
+import com.takethistoyourgrave.todos.data.remote.TodoApi
 import com.takethistoyourgrave.todos.data.TodoRepositoryImpl
 import com.takethistoyourgrave.todos.domain.TodoRepository
 import com.takethistoyourgrave.todos.ui.create.CreateTodoViewModel
 import com.takethistoyourgrave.todos.ui.edit.EditTodoViewModel
 import com.takethistoyourgrave.todos.ui.list.TodoListViewModel
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
+private const val BASE_URL = "https://hive.mrdekk.ru/todo/"
+private const val AUTH_TOKEN = "вставлю сюда токен как только пришлют((("
+
 val appModule = module {
+
+    single {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("Authorization", AUTH_TOKEN)
+                    .addHeader("X-Generate-Fails", "30")
+                    .build()
+                chain.proceed(request)
+            }
+            .addInterceptor(logging)
+            .build()
+    }
+
+    single {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(get())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(TodoApi::class.java)
+    }
 
     single {
         FileStorage(File(androidContext().filesDir, "todos.json")).also { it.load() }
     }
 
-    single<NetworkDataSource> { NetworkDataSourceImpl() }
+    single<NetworkDataSource> {
+        NetworkDataSourceImpl(
+            api = get(),
+            deviceId = Build.MODEL
+        )
+    }
 
     single<TodoRepository> { TodoRepositoryImpl(storage = get(), network = get()) }
 

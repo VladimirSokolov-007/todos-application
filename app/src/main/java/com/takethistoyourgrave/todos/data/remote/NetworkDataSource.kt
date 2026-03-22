@@ -3,9 +3,10 @@ package com.takethistoyourgrave.todos.data.remote
 import com.takethistoyourgrave.todos.domain.model.TodoItem
 
 interface NetworkDataSource {
-    fun loadItems(): List<TodoItem>
-    fun loadItem(uid: String): TodoItem?
-    fun sendItem(item: TodoItem)
-    fun deleteItem(uid: String)
-    fun sendAll(items: List<TodoItem>)
+    var revision: Int
+    suspend fun loadItems(): List<TodoItem>
+    suspend fun addItem(item: TodoItem): TodoItem?
+    suspend fun updateItem(item: TodoItem): TodoItem?
+    suspend fun deleteItem(uid: String): TodoItem?
+    suspend fun patchAll(items: List<TodoItem>): List<TodoItem>
 }

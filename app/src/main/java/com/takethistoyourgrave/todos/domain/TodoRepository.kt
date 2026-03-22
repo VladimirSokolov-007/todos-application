@@ -7,8 +7,8 @@ interface TodoRepository {
     val itemsFlow: Flow<List<TodoItem>>
     fun getItems(): List<TodoItem>
     fun getItem(uid: String): TodoItem?
-    fun addItem(item: TodoItem)
-    fun updateItem(item: TodoItem)
-    fun deleteItem(uid: String)
-    fun refresh()
+    suspend fun addItem(item: TodoItem)
+    suspend fun updateItem(item: TodoItem)
+    suspend fun deleteItem(uid: String)
+    suspend fun refresh()
 }
